@@ -120,7 +120,11 @@ function drawFish(f,t){
   ctx.save();
   const shadow=clamp(1-rise/520,.35,1);
   ctx.globalAlpha=.3*shadow;ellipse(x+4,603,66*shadow,13*shadow,'#173c37');ctx.globalAlpha=1;
-  ctx.translate(x,y);ctx.rotate((f.air?-.06-Math.cos(p*Math.PI)*.12:0)+f.lean*.3);ctx.scale(.92,.92);
+  if(f.index===0&&f.cooldown>0&&!f.air){ctx.globalAlpha=.65;for(let i=0;i<3;i++)ellipse(x-22+i*22,y-115-8*Math.sin(t*4+i*2)-i*9,7+i*3,6+i*3,'#d6eff5');ctx.globalAlpha=1}
+  ctx.translate(x,y);
+  if(f.index===0&&f.cooldown>0&&!f.air){ctx.translate(0,17);ctx.rotate(Math.sin(t*12)*.10+.17);ctx.scale(1.12,.79)}
+  else ctx.rotate((f.air?-.06-Math.cos(p*Math.PI)*.12:0)+f.lean*.3);
+  ctx.scale(.92,.92);
   // Surubí pintado estilizado: cabeza ancha, cuerpo largo, vientre claro y bigotes.
   const back=colors[f.index],light=['#b7c6b0','#c8b99a','#a9c5c7','#c8b39d'][f.index];
   ctx.fillStyle=back;ctx.strokeStyle='#324a43';ctx.lineWidth=3;
@@ -142,6 +146,7 @@ function drawFish(f,t){
   ctx.fillStyle='#e4d6b6';ctx.beginPath();ctx.ellipse(0,-52,26,8,0,0,Math.PI*2);ctx.fill();
   ellipse(-24,-51,6,5,'#192d30');ellipse(24,-51,6,5,'#192d30');
   ellipse(-25,-52,2,2,'#fff8ce');ellipse(23,-52,2,2,'#fff8ce');
+  if(f.index===0&&f.cooldown>0&&!f.air){ctx.strokeStyle='#f7e2b1';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-31,-57);ctx.lineTo(-19,-47);ctx.moveTo(-19,-57);ctx.lineTo(-31,-47);ctx.moveTo(19,-57);ctx.lineTo(31,-47);ctx.moveTo(31,-57);ctx.lineTo(19,-47);ctx.stroke()}
   ctx.strokeStyle='#344c46';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-23,-63);ctx.quadraticCurveTo(0,-73,23,-63);ctx.stroke();
   ctx.lineWidth=3;ctx.strokeStyle='#d1cba8';ctx.beginPath();
   ctx.moveTo(-33,-52);ctx.quadraticCurveTo(-78,-76,-90,-41);
@@ -150,6 +155,7 @@ function drawFish(f,t){
   ctx.moveTo(26,-34);ctx.quadraticCurveTo(60,-20,72,3);
   ctx.stroke();ctx.restore();
   if(f.index===0&&f.air&&state==='playing'&&!f.attempted&&f.t/f.duration>=RULES.good){ctx.fillStyle='#ffeab0';ctx.font='900 25px system-ui';ctx.textAlign='center';ctx.fillText(f.t/f.duration>=RULES.perfectStart&&f.t/f.duration<=RULES.perfectEnd?'¡PERFECTO!':'¡AHORA!',x,425+Math.sin(t*10)*3)}
+  if(f.index===0&&state==='playing'&&f.cooldown>0&&!f.air){ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 23px system-ui';ctx.fillStyle='#fff6c7';ctx.fillText('AGOTADO',x,397);ctx.font='900 31px system-ui';ctx.fillText(f.cooldown.toFixed(1)+' s',x,436);ctx.restore()}
   if(f.index===0&&!f.air&&state==='playing'&&f.cooldown<=0){
     ctx.fillStyle='#fff0c9';ctx.font='900 20px system-ui';ctx.textAlign='center';
     ctx.fillText('¡TOCÁ!',x,475+Math.sin(t*4)*5);
@@ -157,6 +163,22 @@ function drawFish(f,t){
 }
 function spark(x,y){for(let i=0;i<18;i++){const a=Math.PI*2*i/18;particles.push({x,y,vx:Math.cos(a)*rand(65,185),vy:Math.sin(a)*rand(50,190)-35,life:rand(.35,.8),max:1,color:i%3===0?'#fff5b1':i%3===1?'#f78353':'#91fff1'})}}
 function drawParticles(dt){for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=240*dt;p.life-=dt;if(p.life<=0){particles.splice(i,1);continue}ctx.globalAlpha=clamp(p.life*2,0,1);ellipse(p.x,p.y,5,5,p.color)}ctx.globalAlpha=1}
+function drawOutcome(dt){
+ if(!resultFx||state!=='playing')return;
+ const fx=resultFx;fx.age+=dt;
+ if(fx.age>=fx.duration){resultFx=null;return}
+ const q=fx.age/fx.duration,opacity=clamp(Math.min(1,fx.age*9,(1-q)*4),0,1);
+ const float=38*q,scale=1+.2*Math.sin(Math.PI*Math.min(q*1.5,1));
+ const f=fishes[0],prog=f.air?clamp(f.t/f.duration,0,1):0;
+ const rise=f.air?Math.sin(Math.PI*prog)*f.height:0;
+ const x=f.x,y=Math.max(320,470-rise)-float;
+ ctx.save();ctx.globalAlpha=opacity;ctx.translate(x,y);ctx.scale(scale,scale);
+ ctx.font='1000 33px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.lineWidth=7;ctx.strokeStyle='#102d3c';ctx.strokeText(fx.label,0,0);
+ ctx.fillStyle=fx.color;ctx.fillText(fx.label,0,0);
+ ctx.font='800 13px system-ui';ctx.lineWidth=4;ctx.strokeText(fx.detail,0,27);ctx.fillStyle='#fff9e7';ctx.fillText(fx.detail,0,27);
+ ctx.restore();
+}
 function badges(){for(let i=0;i<4;i++){const x=lanes[i];roundRect(x-82,650,164,37,18,i===0?'#1d60bc':'#346a5d',i===0?'#b5e7ff':'#73c5a8');ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='900 20px system-ui';ctx.textBaseline='middle';ctx.fillText(i===0?'1P · VOS':'COM '+i,x,670)}}
 function update(dt,t){
  if(state!=='playing')return;
@@ -211,7 +233,7 @@ function update(dt,t){
 }
 
 function finish(){state='finished';jump.disabled=true;const me=fishes[0].score,best=Math.max(...fishes.map(x=>x.score)),won=me===best&&fishes.filter(x=>x.score===best).length===1,tie=me===best&&!won;$('#panelIcon').textContent=won?'🏆':tie?'🤝':'🎣';$('#panelTitle').textContent=won?'¡GANASTE!':tie?'¡EMPATE!':'¡FIN DE PARTIDA!';$('#panelText').innerHTML=`Tu resultado: <strong>${me} puntos</strong> · Mejor marcador: <strong>${best}</strong>.<br>Tu mejor combo: <strong>×${bestStreak}</strong> · Excelentes: <strong>${fishes[0].perfects}</strong> · Bien: <strong>${fishes[0].goods}</strong> · Mal: <strong>${fishes[0].misses}</strong>.<br>${won?'¡Dominaste el estanque!':tie?'Te faltó un salto para ganar en solitario.':'Probá tocar mientras baja por la zona verde para encadenar y ganar velocidad.'}`;$('#start').textContent='JUGAR OTRA VEZ';veil.hidden=false;audio(won?950:340,.32)}
-function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.clearRect(0,0,W,H);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);badges();requestAnimationFrame(frame)}
+function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.clearRect(0,0,W,H);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);drawOutcome(dt);badges();requestAnimationFrame(frame)}
 $('#start').addEventListener('click',begin);
 $('#reset').addEventListener('click',reset);
 jump.addEventListener('pointerdown',e=>{e.preventDefault();tap()});
