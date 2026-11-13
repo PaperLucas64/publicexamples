@@ -11,7 +11,7 @@
 </head>
 <body>
 <main class="shell">
-<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div></div><div class="tag">PROTOTIPO · v0.4</div></header>
+<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div></div><div class="tag">PROTOTIPO · v0.5</div></header>
 <section class="stage"><div class="gamehead"><span class="pill">SURUBÍ · MODO SALTO</span><span class="pill" id="roundName">4 COMPETIDORES</span><span class="timer" id="timer">30.0s</span></div><div class="gamedisplay"><canvas id="arena" width="1200" height="700" aria-label="Escenario de saltos con cuatro peces compitiendo por tocar los marcadores"></canvas><div class="veil" id="veil"><div class="panel"><div class="medal" id="panelIcon">🏆</div><h2 id="panelTitle">¡Que salpique!</h2><p id="panelText">Un toque hace saltar al surubí. <strong>Durante la bajada, tocá cuando la barra esté verde</strong> para encadenar saltos. Se muestran <strong>MAL, BIEN o EXCELENTE</strong> según cómo sincronices. Si rompés una racha grande, el surubí queda <strong>AGOTADO</strong> unos segundos.</p><button id="start">EMPEZAR PARTIDA</button></div></div></div></section>
 <div class="bottom"><div class="instruction"><h3>01 · SALTÁ</h3><p>Un toque, clic, <kbd>ESPACIO</kbd> o <kbd>A</kbd>.<br>En celular, tocá la pantalla.</p></div>
 <div class="charge-container"><div class="charge-label" id="chargeText">RITMO DEL SALTO</div>
@@ -25,7 +25,7 @@
   <div class="feedback" id="feedback" aria-live="polite">¡Prepará el primer salto!</div>
 </div>
 <div class="controls"><div class="sub"><button id="sound" aria-label="Activar o silenciar sonidos">🔊 Sonido</button><button id="reset">↻ Reiniciar</button></div><button class="action" id="jump" disabled>▲ ¡SALTAR!</button></div>
-<p class="hint">1 toque = 1 salto · Tocá al caer en la zona verde para hacer combo · Máximo 30 segundos · Próximo modo: carrera de surubíes</p><p class="note">Prototipo original de Mauspi Lab. Surubíes dibujados por código, sin personajes ni recursos de Pokémon.</p>
+<p class="hint">1 toque = 1 salto · Tocá al caer en la zona verde para hacer combo · Máximo 30 segundos · Próximo modo: carrera de surubíes</p><p class="note">Prototipo original de Mauspi Lab. Surubíes pixel art hechos en canvas, con poses de nado, salto y agotamiento. Sin personajes ni recursos de Pokémon.</p>
 </main>
 <script>
 (()=>{
@@ -113,7 +113,89 @@ for(let i=0;i<4;i++){const x=lanes[i];ellipse(x,624,105,26,'#4c9772');ellipse(x,
 // Hanging metallic counters, top center of each lane.
 for(let i=0;i<4;i++){const x=lanes[i];line(x,0,x,144,'#546f73',7);line(x+8,0,x+8,144,'#c5e2d3',3);ctx.fillStyle='#728e8b';ctx.beginPath();ctx.moveTo(x-100,143);ctx.lineTo(x+100,143);ctx.lineTo(x+90,258);ctx.quadraticCurveTo(x,292,x-90,258);ctx.closePath();ctx.fill();roundRect(x-90,145,180,116,17,'#b8c8b8','#59746c');roundRect(x-79,156,158,76,12,'#1c3036','#5c7e86');roundRect(x-69,164,138,54,7,'#102329');ctx.fillStyle='#f8f7df';ctx.font='900 50px ui-monospace, monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(fishes[i]?.score||0).padStart(3,'0'),x,194);if(fishes[i]?.flash>0){ctx.fillStyle=`rgba(255,241,148,${Math.min(1,fishes[i].flash)*.6})`;roundRect(x-75,158,150,66,7,'rgba(255,240,117,.25)')}}
 }
-function drawFish(f,t){
+
+const FISH_COLORS=[
+ {back:'#576950',side:'#82916a',belly:'#eddfb9',fin:'#ab8155',spot:'#314a39'},
+ {back:'#5d6b59',side:'#84957a',belly:'#e8d2ae',fin:'#956f4e',spot:'#354e47'},
+ {back:'#4b6671',side:'#6e8c8a',belly:'#c9d9bf',fin:'#9c7657',spot:'#294b58'},
+ {back:'#776c56',side:'#a4936f',belly:'#e5d5bd',fin:'#b78e5b',spot:'#57493b'}
+];
+const PIXEL_FISH=[];
+function pixelFishSprite(i,pose){
+ const key=i+':'+pose;if(PIXEL_FISH[key])return PIXEL_FISH[key];
+ const sprite=document.createElement('canvas');sprite.width=160;sprite.height=116;
+ const p=sprite.getContext('2d'),c=FISH_COLORS[i];p.imageSmoothingEnabled=false;
+ const rect=(x,y,w,h,color)=>{p.fillStyle=color;p.fillRect(x,y,w,h)};
+ const poly=(pts,color,stroke)=>{p.beginPath();p.moveTo(pts[0][0],pts[0][1]);for(let j=1;j<pts.length;j++)p.lineTo(pts[j][0],pts[j][1]);p.closePath();p.fillStyle=color;p.fill();if(stroke){p.strokeStyle=stroke;p.lineWidth=2;p.stroke()}};
+ const stroke=(pts,color,w=2)=>{p.beginPath();p.moveTo(pts[0][0],pts[0][1]);for(let j=1;j<pts.length;j++)p.lineTo(pts[j][0],pts[j][1]);p.strokeStyle=color;p.lineWidth=w;p.lineJoin='miter';p.lineCap='square';p.stroke()};
+ // Aletas, cola facetada y cuerpo pintado, dibujados directamente en canvas a baja resolución.
+ poly([[111,56],[136,39],[151,31],[145,53],[153,73],[138,81],[111,66]],c.fin,'#4e523f');
+ poly([[117,56],[147,41],[141,53],[149,70],[121,64]],'#dec292');
+ for(let k=0;k<3;k++)stroke([[126,51+k*5],[142,42+k*10]],'#796546',2);
+ poly([[75,48],[83,29],[94,22],[100,43]],c.fin,'#3d4b3b');
+ poly([[85,39],[93,28],[94,43]],'#e1b97d');
+ poly([[101,70],[119,88],[123,78],[111,62]],c.fin,'#4e523f');
+ poly([[35,37],[48,29],[70,32],[91,39],[114,43],[129,53],[129,66],[119,75],[92,78],[67,76],[41,76],[24,66],[18,55],[24,44]],c.back,'#31463d');
+ poly([[24,57],[42,50],[72,53],[98,57],[123,61],[116,72],[92,77],[64,75],[38,72],[21,65]],c.side);
+ poly([[22,62],[39,61],[62,63],[90,65],[116,67],[108,74],[81,78],[50,77],[30,73]],c.belly);
+ poly([[42,76],[49,94],[65,86],[73,75]],c.fin,'#5d5744');
+ poly([[88,75],[96,92],[110,84],[105,70]],c.fin,'#5d5744');
+ stroke([[47,80],[52,89]],'#dec397',2);stroke([[59,79],[63,86]],'#dec397',2);
+ poly([[23,44],[29,38],[45,36],[62,41],[66,52],[58,65],[42,69],[26,67],[18,60],[17,49]],c.side,'#314b3c');
+ poly([[18,57],[29,58],[45,61],[53,66],[41,72],[23,68],[17,62]],c.belly);
+ const marks=[[60,46,7,5],[77,42,6,5],[90,46,9,5],[105,51,8,4],[67,61,6,4],[82,55,8,4],[103,63,6,3],[56,68,5,4],[92,69,7,3]];
+ for(const [x,y,w,h] of marks)rect(x,y,w,h,c.spot);
+ rect(75,41,3,9,c.spot);rect(112,55,3,8,c.spot);rect(50,47,5,3,c.spot);
+ rect(32,46,10,10,'#25343a');rect(34,48,7,6,'#f8f3d8');rect(38,49,3,4,'#26313a');rect(35,48,2,2,'#fff');
+ if(pose==='tired'){
+   rect(33,46,11,4,c.back);stroke([[33,54],[42,55]],'#172d2a',3);
+   poly([[18,64],[30,66],[33,70],[18,70]],'#a16562');
+ }else if(pose==='launch'||pose==='excellent'||pose==='leap'){
+   poly([[16,60],[30,61],[44,67],[33,76],[21,73]],'#aa5f60','#6b4b4a');
+   poly([[19,65],[28,67],[25,70]],'#e7a09a');
+ }else stroke([[17,62],[30,65],[40,66]],'#654e46',3);
+ stroke([[27,60],[13,56],[2,55]],'#f0e0bc',3);
+ stroke([[26,65],[11,74],[3,81]],'#f0e0bc',3);
+ stroke([[34,64],[21,81],[18,96]],'#f0e0bc',2);
+ stroke([[35,43],[20,33],[10,26]],'#f0e0bc',2);
+ stroke([[44,63],[40,82],[33,99]],'#f0e0bc',2);
+ stroke([[47,82],[58,83]],'#dcbd91',2);stroke([[92,82],[102,84]],'#e0be8e',2);
+ rect(51,34,17,3,'#a7a889');rect(92,40,13,3,'#b4ab89');
+ if(pose==='tired'){rect(9,42,4,3,'#bed7ce');rect(11,34,3,4,'#bed7ce')}
+ PIXEL_FISH[key]=sprite;return sprite;
+}
+function drawPixelSurubi(f,t){
+ const base=588,progress=f.air?clamp(f.t/f.duration,0,1):0;
+ const rise=f.air?Math.sin(progress*Math.PI)*f.height:0;
+ const x=f.x,y=base-rise+(f.air?0:Math.sin(t*2.5+f.index)*2);
+ const shadow=clamp(1-rise/490,.35,1);
+ ctx.save();ctx.globalAlpha=.27*shadow;ellipse(x,611,77*shadow,15*shadow,'#164737');ctx.restore();
+ const pose=f.cooldown>0?'tired':!f.air?'idle':progress<.23?'launch':f.flash>0?'excellent':'leap';
+ const sprite=pixelFishSprite(f.index,pose);
+ ctx.save();ctx.translate(x,y-20);
+ let angle=f.air?(-.42-.45*Math.sin(Math.PI*progress)):0;
+ if(f.cooldown>0&&!f.air){angle=.17+Math.sin(t*9)*.045;ctx.scale(1.05,.78)}
+ ctx.rotate(angle);
+ if(f.air)ctx.rotate(.055*Math.sin(progress*Math.PI*3));
+ ctx.imageSmoothingEnabled=false;
+ const w=184,h=132;ctx.drawImage(sprite,-w/2,-h/2,w,h);ctx.restore();
+ if(state==='playing'&&f.index===0){
+  if(f.cooldown>0&&!f.air){
+    ctx.fillStyle='#fff2c6';ctx.textAlign='center';ctx.font='900 25px system-ui';ctx.fillText('AGOTADO',x,y-100);
+    ctx.font='900 27px system-ui';ctx.fillText(f.cooldown.toFixed(1)+' s',x,y-70);
+    for(let i=0;i<3;i++)ellipse(x-23+i*23,y-125-11*Math.sin(t*3+i),5+i*2,5+i*2,'#d4f4ed');
+  }else if(f.air&&!f.attempted&&progress>=RULES.good){
+    ctx.fillStyle=progress>=RULES.perfectStart&&progress<=RULES.perfectEnd?'#acffce':'#ffe4a3';
+    ctx.textAlign='center';ctx.font='900 23px system-ui';
+    ctx.fillText(progress>=RULES.perfectStart&&progress<=RULES.perfectEnd?'¡EXCELENTE!':'¡AHORA!',x,Math.max(350,y-100));
+  }else if(!f.air){
+    ctx.fillStyle='#fff2cc';ctx.textAlign='center';ctx.font='900 20px system-ui';
+    ctx.fillText('¡TOCÁ!',x,y-106+Math.sin(t*5)*3);
+  }
+ }
+}
+
+function drawFish(f,t){drawPixelSurubi(f,t);return;
   const base=573,p=f.air?clamp(f.t/f.duration,0,1):0;
   const rise=f.air?Math.sin(p*Math.PI)*f.height:0;
   const x=f.x,y=base-rise+(f.air?0:Math.sin(t*2.5+f.index)*3);
