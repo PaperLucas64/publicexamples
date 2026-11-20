@@ -68,7 +68,7 @@
 }
 
 
-/* SALPICADURA v0.7: UN SOLO JUEGO ARCADE 16:9
+/* SALPICADURA v0.7.1: UN SOLO JUEGO ARCADE 16:9
    La página no tiene márgenes, scroll ni UI exterior; el mismo frame contiene arena, HUD y controles. */
 html,body{width:100%;height:100%;min-height:0;margin:0;padding:0;overflow:hidden;overscroll-behavior:none}
 body{display:grid;place-items:center;width:100vw;height:100dvh;padding:0;background:#030c14}
@@ -197,7 +197,7 @@ body{display:grid;place-items:center;width:100vw;height:100dvh;padding:0;backgro
 <body>
 <main class="shell">
 <section class="stage">
-<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div><div class="gamehead"><span class="pill">SURUBÍ · MODO SALTO</span><span class="pill" id="roundName">4 COMPETIDORES</span><span class="timer" id="timer">30.0s</span></div><div class="tag">v0.7</div></header><div class="gamedisplay"><canvas id="arena" width="1200" height="700" aria-label="Escenario de saltos con cuatro peces compitiendo por tocar los marcadores"></canvas>
+<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div><div class="gamehead"><span class="pill">SURUBÍ · MODO SALTO</span><span class="pill" id="roundName">4 COMPETIDORES</span><span class="timer" id="timer">30.0s</span></div><div class="tag">v0.7.1</div></header><div class="gamedisplay"><canvas id="arena" width="1200" height="700" aria-label="Escenario de saltos con cuatro peces compitiendo por tocar los marcadores"></canvas>
 <div class="veil" id="veil"><div class="panel"><div class="medal" id="panelIcon">🏆</div><h2 id="panelTitle">¡Que salpique!</h2><p id="panelText">Un toque hace saltar al surubí. <strong>Durante la bajada, tocá cuando la barra esté verde</strong> para encadenar saltos. Se muestran <strong>MAL, BIEN o EXCELENTE</strong> según cómo sincronices. Si rompés una racha grande, el surubí queda <strong>AGOTADO</strong> unos segundos.</p><button id="start">EMPEZAR PARTIDA</button></div></div></div>
 <div class="gamehud">
 <div class="charge-container"><div class="charge-label" id="chargeText">RITMO DEL SALTO</div>
@@ -508,7 +508,7 @@ function update(dt,t){
 }
 
 function finish(){state='finished';jump.disabled=true;const me=fishes[0].score,best=Math.max(...fishes.map(x=>x.score)),won=me===best&&fishes.filter(x=>x.score===best).length===1,tie=me===best&&!won;$('#panelIcon').textContent=won?'🏆':tie?'🤝':'🎣';$('#panelTitle').textContent=won?'¡GANASTE!':tie?'¡EMPATE!':'¡FIN DE PARTIDA!';$('#panelText').innerHTML=`Tu resultado: <strong>${me} puntos</strong> · Mejor marcador: <strong>${best}</strong>.<br>Tu mejor combo: <strong>×${bestStreak}</strong> · Excelentes: <strong>${fishes[0].perfects}</strong> · Bien: <strong>${fishes[0].goods}</strong> · Mal: <strong>${fishes[0].misses}</strong> · Energía restante: <strong>${Math.floor(fishes[0].energy)}%</strong>.<br>${won?'¡Dominaste el estanque!':tie?'Te faltó un salto para ganar en solitario.':'Probá tocar mientras baja por la zona verde para encadenar y ganar velocidad.'}`;$('#start').textContent='JUGAR OTRA VEZ';veil.hidden=false;audio(won?950:340,.32)}
-function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);ctx.save();ctx.translate(0,-85);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);drawOutcome(dt);badges();ctx.restore();requestAnimationFrame(frame)}
+function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);ctx.save();ctx.translate(0,-115);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);drawOutcome(dt);badges();ctx.restore();requestAnimationFrame(frame)}
 $('#start').addEventListener('click',begin);
 $('#reset').addEventListener('click',reset);
 jump.addEventListener('pointerdown',e=>{e.preventDefault();tap()});
