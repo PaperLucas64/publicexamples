@@ -67,20 +67,142 @@
  .gamehud .stat strong{font-size:19px}
 }
 
+
+/* SALPICADURA v0.7: UN SOLO JUEGO ARCADE 16:9
+   La página no tiene márgenes, scroll ni UI exterior; el mismo frame contiene arena, HUD y controles. */
+html,body{width:100%;height:100%;min-height:0;margin:0;padding:0;overflow:hidden;overscroll-behavior:none}
+body{display:grid;place-items:center;width:100vw;height:100dvh;padding:0;background:#030c14}
+.shell{
+  display:block;width:min(100vw,177.77778dvh);height:min(100dvh,56.25vw);
+  max-width:none;max-height:none;min-width:0;min-height:0;margin:0;padding:0;
+  aspect-ratio:16/9;overflow:hidden
+}
+.stage{
+  container-type:size;display:block;position:relative;width:100%;height:100%;
+  min-height:0;margin:0;padding:0;aspect-ratio:16/9;overflow:hidden;
+  border:0;border-radius:0;outline:0;box-shadow:none;background:#1b4c5e
+}
+.stage>.top{
+  position:absolute;z-index:6;top:0;left:0;right:0;height:9%;margin:0;
+  display:flex;flex-direction:row;align-items:center;justify-content:space-between;
+  gap:1.3cqw;min-width:0;padding:0 1.35cqw;
+  background:linear-gradient(90deg,#071b30ee,#0b293ee8);border:0;border-bottom:1px solid #407e8a;
+  box-shadow:none;backdrop-filter:blur(2px)
+}
+.stage>.top .brand{display:flex;min-width:0;align-items:center;gap:.7cqw}
+.stage>.top .emblem{display:grid;place-items:center;width:4.2cqw;height:4.2cqw;min-height:0;border-radius:20%;font-size:2.4cqw}
+.stage>.top .brand h1{margin:0;font-size:2.3cqw;white-space:nowrap;line-height:1.1}
+.stage>.top .eyebrow{font-size:.7cqw;letter-spacing:.13em}
+.stage>.top .tag{flex:0 0 auto;font-size:.8cqw;padding:.4cqw .55cqw}
+.stage>.top .gamehead{
+  display:flex;min-width:0;align-items:center;justify-content:flex-end;
+  gap:1.15cqw;flex:1;padding:0;border:0;background:transparent;box-shadow:none;
+}
+.stage>.top .pill{font-size:1.02cqw;letter-spacing:.04em;white-space:nowrap}
+.stage>.top .timer{flex:0 0 auto;margin:0;font-size:2.2cqw;color:#fff8c8;white-space:nowrap}
+.gamedisplay{
+  position:absolute;z-index:1;inset:0;width:100%;height:100%;overflow:hidden;
+}
+.gamedisplay canvas{
+  display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:fill;
+  touch-action:none;background:#1b5665;image-rendering:auto
+}
+.gamedisplay .veil{
+  position:absolute;z-index:7;inset:0 0 19% 0;padding:1.5%;
+  display:grid;place-items:center;background:#041421aa;backdrop-filter:blur(4px)
+}
+.gamedisplay .veil[hidden]{display:none}
+.gamedisplay .panel{
+  width:min(45cqw,90%);max-width:90%;max-height:84%;overflow:auto;
+  padding:1.55cqw 1.8cqw;border-radius:1.2cqw;border:1px solid #67b1bf;
+  background:#0d2a40eb;box-shadow:0 1cqw 2.4cqw #0007
+}
+.panel .medal{font-size:3.3cqw}
+.panel h2{font-size:2.35cqw;line-height:1.13;margin:.65cqw 0}
+.panel p{font-size:1.18cqw;line-height:1.38;margin:.85cqw 0 1.25cqw}
+.panel button{font-size:1.3cqw;padding:1.15cqw 2cqw;border-radius:.8cqw}
+.gamehud{
+  position:absolute;z-index:5;left:0;right:0;bottom:0;height:19%;
+  display:grid;grid-template-columns:minmax(0,24fr) minmax(0,57fr) minmax(0,19fr);
+  align-items:stretch;gap:1.05cqw;margin:0;padding:1.1cqh 1.25cqw;
+  border:0;border-top:2px solid #43899f;border-radius:0;
+  background:linear-gradient(180deg,#0b2a42f2,#061c30fb);
+  box-shadow:none;overflow:hidden
+}
+.gamehud>.charge-container{
+  grid-column:1;grid-row:1;position:static;transform:none;
+  width:100%;height:100%;min-width:0;margin:0;padding:.5cqw;
+  border:0;border-radius:0;background:transparent;box-shadow:none;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  gap:.8cqh;pointer-events:none
+}
+.gamehud .charge-label{text-align:center;font-size:.94cqw;line-height:1.2;letter-spacing:.07em;color:#bfeae7}
+.gamehud .charge{width:100%;max-width:none;height:2cqh;min-height:5px;border-width:1px}
+.gamehud .charge>div{top:-.6cqh;height:3cqh;width:max(3px,.35cqw)}
+.gamehud .legend{width:100%;max-width:none;gap:.3cqw;font-size:.78cqw}
+.gamehud>.skillboard{
+  grid-column:2;grid-row:1;min-width:0;height:100%;margin:0;padding:0;
+  display:grid;grid-template-columns:minmax(0,12fr) minmax(0,14fr) minmax(0,34fr) minmax(0,40fr);
+  align-items:stretch;gap:.55cqw;
+}
+.gamehud .stat,.gamehud .energy-wrap,.gamehud .feedback{
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  min-width:0;min-height:0;margin:0;padding:.48cqw .6cqw;
+  border:1px solid #3d6f88;border-radius:.65cqw;background:#123449c9
+}
+.gamehud .stat span,.gamehud .energy-top span{font-size:.77cqw;line-height:1.12;letter-spacing:.025em}
+.gamehud .stat strong{font-size:1.9cqw;margin:.35cqw 0 0;line-height:1.05}
+.gamehud .energy-top{align-items:center;gap:.3cqw;flex-wrap:wrap}
+.gamehud .energy-top strong{font-size:1.22cqw}
+.gamehud .energy-track{margin-top:.55cqw;height:1.3cqh;min-height:4px}
+.gamehud .energy-delta{font-size:.74cqw;margin:.35cqw 0 0;line-height:1.13;min-height:0}
+.gamehud .feedback{font-size:.92cqw;text-align:center;line-height:1.2;overflow:hidden;overflow-wrap:anywhere}
+.gamehud>.controls{
+  grid-column:3;grid-row:1;min-width:0;min-height:0;margin:0;padding:0;
+  display:grid;grid-template-rows:minmax(0,1fr) auto;align-items:stretch;gap:.55cqh;
+}
+.gamehud .action{
+  width:100%;height:100%;min-width:0;min-height:0;margin:0;padding:0 .35cqw;
+  font-size:1.3cqw;line-height:1.15;border-radius:.65cqw;box-shadow:0 .42cqw 0 #9f5737;
+}
+.gamehud .sub{width:100%;justify-content:flex-end;align-items:center;gap:.45cqw}
+.gamehud .sub button{
+  min-width:0;margin:0;padding:.55cqw .6cqw;border-radius:.4cqw;
+  font-size:.85cqw;white-space:nowrap;line-height:1.15
+}
+.hint,.note,.bottom{display:none!important}
+@media (max-width:650px){
+ .stage>.top .eyebrow,.stage>.top .tag,.stage>.top #roundName{display:none}
+ .stage>.top .emblem{width:4.5cqw;height:4.5cqw}
+ .stage>.top .brand h1{font-size:3cqw}
+ .stage>.top .pill{font-size:1.5cqw}
+ .stage>.top .timer{font-size:2.7cqw}
+ .gamehud{grid-template-columns:minmax(0,25fr) minmax(0,53fr) minmax(0,22fr);gap:.6cqw;padding:1cqh 1cqw}
+ .gamehud>.skillboard{grid-template-columns:minmax(0,18fr) minmax(0,22fr) minmax(0,60fr)}
+ .gamehud .feedback{display:none}
+ .gamehud .energy-delta{display:none}
+ .gamehud .stat span,.gamehud .energy-top span{font-size:1.15cqw}
+ .gamehud .stat strong{font-size:2.6cqw}
+ .gamehud .energy-top strong{font-size:1.7cqw}
+ .gamehud .charge-label{font-size:1.25cqw}
+ .gamehud .legend{font-size:1.12cqw}
+ .gamehud .sub button{font-size:1.2cqw;padding:.4cqw}
+ .gamehud .action{font-size:1.9cqw}
+ .gamedisplay .panel{width:min(65cqw,90%);padding:2cqw}
+ .panel h2{font-size:3.2cqw}.panel p{font-size:1.6cqw}
+ .panel button{font-size:2cqw}
+}
 </style>
 </head>
 <body>
 <main class="shell">
 <section class="stage">
-<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div></div><div class="tag">PROTOTIPO · v0.6</div></header>
-<div class="gamehead"><span class="pill">SURUBÍ · MODO SALTO</span><span class="pill" id="roundName">4 COMPETIDORES</span><span class="timer" id="timer">30.0s</span></div><div class="gamedisplay"><canvas id="arena" width="1200" height="700" aria-label="Escenario de saltos con cuatro peces compitiendo por tocar los marcadores"></canvas>
+<header class="top"><div class="brand"><div class="emblem">🐟</div><div><div class="eyebrow">MAUSPI LAB · ARCADE TEST</div><h1>Salpicadura</h1></div><div class="gamehead"><span class="pill">SURUBÍ · MODO SALTO</span><span class="pill" id="roundName">4 COMPETIDORES</span><span class="timer" id="timer">30.0s</span></div><div class="tag">v0.7</div></header><div class="gamedisplay"><canvas id="arena" width="1200" height="700" aria-label="Escenario de saltos con cuatro peces compitiendo por tocar los marcadores"></canvas>
+<div class="veil" id="veil"><div class="panel"><div class="medal" id="panelIcon">🏆</div><h2 id="panelTitle">¡Que salpique!</h2><p id="panelText">Un toque hace saltar al surubí. <strong>Durante la bajada, tocá cuando la barra esté verde</strong> para encadenar saltos. Se muestran <strong>MAL, BIEN o EXCELENTE</strong> según cómo sincronices. Si rompés una racha grande, el surubí queda <strong>AGOTADO</strong> unos segundos.</p><button id="start">EMPEZAR PARTIDA</button></div></div></div>
+<div class="gamehud">
 <div class="charge-container"><div class="charge-label" id="chargeText">RITMO DEL SALTO</div>
 <div class="charge" role="img" aria-label="Ventana de precisión: amarillo al final, verde para salto perfecto"><div id="chargeBar"></div></div>
-<div class="legend"><span>ANTES</span><span>BUENO</span><span>PERFECTO</span></div></div><div class="veil" id="veil"><div class="panel"><div class="medal" id="panelIcon">🏆</div><h2 id="panelTitle">¡Que salpique!</h2><p id="panelText">Un toque hace saltar al surubí. <strong>Durante la bajada, tocá cuando la barra esté verde</strong> para encadenar saltos. Se muestran <strong>MAL, BIEN o EXCELENTE</strong> según cómo sincronices. Si rompés una racha grande, el surubí queda <strong>AGOTADO</strong> unos segundos.</p><button id="start">EMPEZAR PARTIDA</button></div></div></div>
-<div class="gamehud">
-<div class="bottom"><div class="instruction"><h3>01 · SALTÁ</h3><p>Un toque, clic, <kbd>ESPACIO</kbd> o <kbd>A</kbd>.<br>En celular, tocá la pantalla.</p></div>
-
-<div class="instruction"><h3>02 · MEDÍ TU ENERGÍA</h3><p>Tocá en verde <strong>antes de caer</strong>.<br>Los saltos gastan energía; los aciertos la recuperan.</p></div></div>
+<div class="legend"><span>ANTES</span><span>BUENO</span><span>PERFECTO</span></div></div>
 <div class="skillboard">
   <div class="stat"><span>COMBO</span><strong id="comboText">×0</strong></div>
   <div class="stat"><span>VELOCIDAD</span><strong id="speedText">×1.00</strong></div>
@@ -90,7 +212,6 @@
 <div class="controls"><div class="sub"><button id="sound" aria-label="Activar o silenciar sonidos">🔊 Sonido</button><button id="reset">↻ Reiniciar</button></div><button class="action" id="jump" disabled>▲ ¡SALTAR!</button></div>
 </div>
 </section>
-<p class="hint">La barra de precisión, la energía y los controles ahora forman parte de la misma pantalla · 30 segundos por partida</p><p class="note">Prototipo original de Mauspi Lab. Surubíes pixel art hechos en canvas, con poses de nado, salto y agotamiento. Sin personajes ni recursos de Pokémon.</p>
 </main>
 <script>
 (()=>{
@@ -331,7 +452,7 @@ function drawOutcome(dt){
  ctx.font='800 13px system-ui';ctx.lineWidth=4;ctx.strokeText(fx.detail,0,27);ctx.fillStyle='#fff9e7';ctx.fillText(fx.detail,0,27);
  ctx.restore();
 }
-function badges(){for(let i=0;i<4;i++){const x=lanes[i];roundRect(x-82,650,164,37,18,i===0?'#1d60bc':'#346a5d',i===0?'#b5e7ff':'#73c5a8');ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='900 20px system-ui';ctx.textBaseline='middle';ctx.fillText(i===0?'1P · VOS':'COM '+i,x,670)}}
+function badges(){for(let i=0;i<4;i++){const x=lanes[i];roundRect(x-77,315,154,31,15,i===0?'#1d60bc':'#346a5d',i===0?'#b5e7ff':'#73c5a8');ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='900 18px system-ui';ctx.textBaseline='middle';ctx.fillText(i===0?'1P · VOS':'COM '+i,x,331)}}
 function update(dt,t){
  if(state!=='playing')return;
  elapsed=Math.min(30,elapsed+dt);seconds=30-elapsed;
@@ -387,7 +508,7 @@ function update(dt,t){
 }
 
 function finish(){state='finished';jump.disabled=true;const me=fishes[0].score,best=Math.max(...fishes.map(x=>x.score)),won=me===best&&fishes.filter(x=>x.score===best).length===1,tie=me===best&&!won;$('#panelIcon').textContent=won?'🏆':tie?'🤝':'🎣';$('#panelTitle').textContent=won?'¡GANASTE!':tie?'¡EMPATE!':'¡FIN DE PARTIDA!';$('#panelText').innerHTML=`Tu resultado: <strong>${me} puntos</strong> · Mejor marcador: <strong>${best}</strong>.<br>Tu mejor combo: <strong>×${bestStreak}</strong> · Excelentes: <strong>${fishes[0].perfects}</strong> · Bien: <strong>${fishes[0].goods}</strong> · Mal: <strong>${fishes[0].misses}</strong> · Energía restante: <strong>${Math.floor(fishes[0].energy)}%</strong>.<br>${won?'¡Dominaste el estanque!':tie?'Te faltó un salto para ganar en solitario.':'Probá tocar mientras baja por la zona verde para encadenar y ganar velocidad.'}`;$('#start').textContent='JUGAR OTRA VEZ';veil.hidden=false;audio(won?950:340,.32)}
-function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.clearRect(0,0,W,H);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);drawOutcome(dt);badges();requestAnimationFrame(frame)}
+function frame(ms){const t=ms/1000,dt=Math.min(.044,(ms-(last||ms))/1000);last=ms;now=t;update(dt,t);ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);ctx.save();ctx.translate(0,-85);scene(t);fishes.forEach(f=>drawFish(f,t));drawParticles(dt);drawOutcome(dt);badges();ctx.restore();requestAnimationFrame(frame)}
 $('#start').addEventListener('click',begin);
 $('#reset').addEventListener('click',reset);
 jump.addEventListener('pointerdown',e=>{e.preventDefault();tap()});
